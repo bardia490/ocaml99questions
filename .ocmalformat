@@ -1,0 +1,5 @@
+# .ocamlformat
+version: "0.18.0"  
+indent-blank-lines: true
+line-length: 80
+
