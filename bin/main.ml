@@ -25,10 +25,30 @@ let rev lst =
         | h::t -> aux_rev (h::acc) t in
     aux_rev lst []
 
-let rec print_array = function
+let rec print_array f lst = match lst with
     | [] -> ()
-    | h::t -> print_array t; print_int h 
+    | h::t -> f h; print_string " " ;print_array f t  
 
+let print_int_array = print_array print_int
+(* let print_char_array = print_array print_char *)
+let print_string_array = print_array print_string
+
+let is_palindrome lst = 
+    (List.rev lst) = lst
+
+type 'a node = One of 'a | Many of 'a node list
+
+let flatten lst = 
+    let rec aux_flatten acc lst = match lst with
+    | [] -> acc
+    | h::t -> match h with
+        | One  value -> aux_flatten (value::acc) t 
+        | Many values -> aux_flatten acc (values@t) 
+    in
+   List.rev (aux_flatten [] lst)
+ 
+let eliminate_dupes lst = List.rev (List.fold_left (fun acc a ->  if List.mem a acc then acc else a :: acc;) [] lst) 
+    
 let () = 
     let lst = [1;23;4;5;6] in
     let last_value = last lst in
@@ -36,6 +56,12 @@ let () =
     let nth_element = at lst 3 in
     let length_of_list = length_list lst in
     let rev_list = rev lst in
+    let palindrome_test_list = ["x"; "a"; "m"; "a"; "x"] in
+    let a_node = [One "a"; Many [One "b"; Many [One "c" ;One "d"]; One "e"]] in
+    let a_node_flatten = flatten a_node in
+    let compression_lst_test = ["a"; "a"; "a"; "a"; "b"; "c"; "kc"; "a"; "a"; "d"; "e"; "e"; "e"; "e"] in
+    let compressed_lst = eliminate_dupes compression_lst_test in
+    (*-----------------------------------------------------*)
     let _ = match last_value with
     | None -> print_endline "the list was empty"
     | Some value -> print_endline (string_of_int value) in
@@ -46,6 +72,10 @@ let () =
     | None -> print_endline "the list was empty"
     | Some (value) -> print_endline (string_of_int value) in
     let _ = print_endline (string_of_int length_of_list) in
-    let _ = print_array rev_list in
+    let _ = print_int_array rev_list in
     let _ = print_endline "" in
-    ()
+    let _ = print_endline (string_of_bool (is_palindrome palindrome_test_list)) in
+    let _ = print_string_array a_node_flatten in
+    let _ = print_endline "" in
+    let _ = print_string_array compressed_lst in
+    print_endline "" 
