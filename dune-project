@@ -1,6 +1,6 @@
 (lang dune 3.18)
 
-(name OcamlPorblems)
+(name OcamlProblems)
 
 (generate_opam_files true)
 
@@ -16,7 +16,7 @@
 (documentation https://url/to/documentation)
 
 (package
- (name OcamlPorblems)
+ (name OcamlProblems)
  (synopsis "A short synopsis")
  (description "A longer description")
  (depends ocaml)

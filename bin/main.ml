@@ -29,9 +29,17 @@ let rec print_array f lst = match lst with
     | [] -> ()
     | h::t -> f h; print_string " " ;print_array f t  
 
+let rec print_matrix f = function 
+    | [] -> ()
+    | h::t -> print_char '[';print_array f h; print_char ']'; print_matrix f t
+
 let print_int_array = print_array print_int
 (* let print_char_array = print_array print_char *)
 let print_string_array = print_array print_string
+
+(* let print_char_matrix = print_array print_char *)
+(*let print_int_matrix = print_matrix print_int*)
+let print_string_matrix = print_matrix print_string
 
 let is_palindrome lst = 
     (List.rev lst) = lst
@@ -47,8 +55,27 @@ let flatten lst =
     in
    List.rev (aux_flatten [] lst)
  
-let eliminate_dupes lst = List.rev (List.fold_left (fun acc a ->  if List.mem a acc then acc else a :: acc;) [] lst) 
+let eliminate_dupes lst = List.rev (List.fold_left (fun acc a ->  if List.mem a acc then acc else a :: acc) [] lst) 
+
+let pack lst = 
+    let rec aux acc sub_list_dupes last_item = function
+        | [] -> sub_list_dupes::acc
+        | h::t -> if last_item = h then aux acc (h::sub_list_dupes) h t else  aux (sub_list_dupes::acc) (h::[]) h t
+    in
+    match lst with
+    | [] -> []
+    | head::tail -> List.rev (aux [] [head] head tail) 
     
+let encode lst = 
+    let packed_list = pack lst in 
+    let rec aux acc = function
+        | [] -> acc
+        | h::t -> let length_of_sublist = List.length h in aux ((length_of_sublist,List.nth h 0)::acc) t
+    in 
+    List.rev (aux [] packed_list) 
+
+let print_run_length_encoding = print_array (fun (a,b) -> print_char '('; print_int a; print_char ' ';print_string b; print_char ')')
+
 let () = 
     let lst = [1;23;4;5;6] in
     let last_value = last lst in
@@ -61,6 +88,8 @@ let () =
     let a_node_flatten = flatten a_node in
     let compression_lst_test = ["a"; "a"; "a"; "a"; "b"; "c"; "kc"; "a"; "a"; "d"; "e"; "e"; "e"; "e"] in
     let compressed_lst = eliminate_dupes compression_lst_test in
+    let sublist_duplicates_test = pack compression_lst_test in
+    let run_length_encoded_list = encode compression_lst_test in
     (*-----------------------------------------------------*)
     let _ = match last_value with
     | None -> print_endline "the list was empty"
@@ -78,4 +107,7 @@ let () =
     let _ = print_string_array a_node_flatten in
     let _ = print_endline "" in
     let _ = print_string_array compressed_lst in
+    let _ = print_endline "" in
+    let _ = print_string_matrix sublist_duplicates_test; print_endline "" in
+    let _ = print_run_length_encoding run_length_encoded_list in
     print_endline "" 
